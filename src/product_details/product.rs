@@ -40,21 +40,7 @@ pub struct ProductDetails {
 }
 
 impl ProductDetails {
-    /// Fetches a product from the given url.
-    ///
-    /// ```rust
-    /// use std::error::Error;
-    /// use flipkart_scraper::{ProductDetails, Url};
-    ///
-    /// #[tokio::main]
-    /// async fn main() -> Result<(), Box<dyn Error>> {
-    ///     let url = "https://www.flipkart.com/samsung-galaxy-f13-waterfall-blue-64-gb/p/itm583ef432b2b0c";
-    ///     let details = ProductDetails::fetch(Url::parse(url)?).await;
-    ///     println!("{:#?}", details);
-    ///     Ok(())
-    /// }
-    // ```
-    pub async fn fetch(url: Url) -> Result<Self> {
+    pub fn parse(webpage_content: String) -> Result<Self> {
         let div_selector = &Selector::parse("div").unwrap();
         let h1_selector = &Selector::parse("h1").unwrap();
         let title_selector = &Selector::parse("title").unwrap();
@@ -68,27 +54,15 @@ impl ProductDetails {
         let tr_selector = &Selector::parse("tr").unwrap();
         let td_selector = &Selector::parse("td").unwrap();
 
-        if !url
-            .domain()
-            .ok_or_else(|| eyre!("Domain name invalid."))?
-            .contains("flipkart.com")
+        if webpage_content.contains("has been moved or deleted")
+            || webpage_content.contains("not right!")
         {
-            bail!("Only flipkart.com is supported");
-        }
-
-        let client = Client::builder()
-            .default_headers(crate::build_headers())
-            .build()?;
-
-        let webpage = client.get(url.to_owned()).send().await?;
-        let body = webpage.text().await?;
-        if body.contains("has been moved or deleted") || body.contains("not right!") {
             bail!("Link provided doesn't corresponds to any product");
         }
-        if body.contains("Internal Server Error") {
+        if webpage_content.contains("Internal Server Error") {
             bail!("Internal Server Error. Host is down or is blocking use of this library.");
         }
-        let document = Html::parse_document(&body);
+        let document = Html::parse_document(&webpage_content);
 
         let mut details = ProductDetails::default();
 
@@ -118,8 +92,8 @@ impl ProductDetails {
             }
         }
 
-        let coming_soon = body.contains("Coming Soon");
-        let in_stock = !(coming_soon || body.contains("currently out of stock"));
+        let coming_soon = webpage_content.contains("Coming Soon");
+        let in_stock = !(coming_soon || webpage_content.contains("currently out of stock"));
         details.in_stock = in_stock;
 
         if in_stock {
@@ -291,10 +265,47 @@ impl ProductDetails {
                 }
             }
         }
-        if details.share_url.is_empty() {
-            details.share_url = url.into();
-        }
 
         Ok(details)
+    }
+
+    /// Fetches a product from the given url.
+    ///
+    /// ```rust
+    /// use std::error::Error;
+    /// use flipkart_scraper::{ProductDetails, Url};
+    ///
+    /// #[tokio::main]
+    /// async fn main() -> Result<(), Box<dyn Error>> {
+    ///     let url = "https://www.flipkart.com/samsung-galaxy-f13-waterfall-blue-64-gb/p/itm583ef432b2b0c";
+    ///     let details = ProductDetails::fetch(Url::parse(url)?).await;
+    ///     println!("{:#?}", details);
+    ///     Ok(())
+    /// }
+    // ```
+    pub async fn fetch(url: Url) -> Result<Self> {
+        if !url
+            .domain()
+            .ok_or_else(|| eyre!("Domain name invalid."))?
+            .contains("flipkart.com")
+        {
+            bail!("Only flipkart.com is supported");
+        }
+
+        let client = Client::builder()
+            .default_headers(crate::build_headers())
+            .build()?;
+
+        let webpage = client.get(url.to_owned()).send().await?;
+        let body = webpage.text().await?;
+
+        let details = Self::parse(body).and_then(|mut p| {
+            if p.share_url.is_empty() {
+                p.share_url = url.into();
+            }
+            Ok(p)
+        });
+
+        details
     }
 }

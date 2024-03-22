@@ -55,24 +55,12 @@ impl std::ops::DerefMut for ProductSearch {
 }
 
 impl ProductSearch {
-    /// Searchs the query for a product on Flipkart.
-    pub async fn search(query: String) -> Result<Self> {
-        let search_url = url::Url::parse_with_params(
-            "https://www.flipkart.com/search?marketplace=FLIPKART",
-            &[("q", query.to_owned())],
-        )?;
-
+    pub fn parse(webpage_content: String) -> Vec<SearchResult> {
         let div_selector = &Selector::parse("div").unwrap();
         let img_selector = &Selector::parse("img").unwrap();
         let link_selector = &Selector::parse("a").unwrap();
 
-        let client = Client::builder()
-            .default_headers(crate::build_headers())
-            .build()?;
-
-        let webpage = client.get(search_url.to_owned()).send().await?;
-        let body = webpage.text().await?;
-        let document = Html::parse_document(&body);
+        let document = Html::parse_document(&webpage_content);
 
         let search_results = document
             .select(div_selector)
@@ -148,9 +136,27 @@ impl ProductSearch {
             })
             .collect::<Vec<_>>();
 
+        search_results
+    }
+
+    /// Searchs the query for a product on Flipkart.
+    pub async fn search(query: String) -> Result<Self> {
+        let search_url = url::Url::parse_with_params(
+            "https://www.flipkart.com/search?marketplace=FLIPKART",
+            &[("q", query.to_owned())],
+        )?;
+
+        let client = Client::builder()
+            .default_headers(crate::build_headers())
+            .build()?;
+
+        let webpage = client.get(search_url.to_owned()).send().await?;
+        let body = webpage.text().await?;
+        let search_results = Self::parse(body);
+
         Ok(ProductSearch {
             query,
-            query_url: search_url.to_string(),
+            query_url: search_url.into(),
             results: search_results,
         })
     }
