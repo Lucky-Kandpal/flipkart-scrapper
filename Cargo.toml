@@ -12,7 +12,7 @@ repository = "https://github.com/dvishal485/flipkart-scraper"
 crate-type = ["cdylib", "lib"]
 
 [features]
-default = ["serde", "wasm_parser"]
+default = ["serde"]
 fetch = ["reqwest"]
 wasm_parser = ["serde-wasm-bindgen", "wasm-bindgen", "serde", "tsify"]
 
