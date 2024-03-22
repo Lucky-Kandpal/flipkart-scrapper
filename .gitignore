@@ -1,5 +1,6 @@
 target
 *.html
-package-lock.json
 node_modules/
 *.sh
+examples/*/*.lock
+examples/*/*-lock.json
