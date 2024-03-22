@@ -4,10 +4,16 @@ use eyre::Result;
 use reqwest::Client;
 use scraper::{Html, Selector};
 
+#[cfg(feature = "wasm_parser")]
+use tsify::Tsify;
+#[cfg(feature = "wasm_parser")]
+use wasm_bindgen::prelude::*;
+
 #[cfg(feature = "fetch")]
 use crate::ProductDetails;
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "wasm_parser", derive(Tsify), tsify(into_wasm_abi))]
 #[derive(Debug, Default)]
 /// Product found in search results
 pub struct SearchResult {
@@ -17,8 +23,10 @@ pub struct SearchResult {
     pub product_link: String,
     /// URL to the thumbnail of the product
     pub thumbnail: String,
+    #[cfg_attr(feature = "wasm_parser", tsify(optional))]
     /// Current price of the product
     pub current_price: Option<i32>,
+    #[cfg_attr(feature = "wasm_parser", tsify(optional))]
     /// Original price of the product
     pub original_price: Option<i32>,
 }

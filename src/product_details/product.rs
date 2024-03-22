@@ -6,32 +6,43 @@ use eyre::{bail, Result};
 use reqwest::Client;
 use scraper::{Html, Selector};
 use url::Url;
+#[cfg(feature = "wasm_parser")]
+use tsify::Tsify;
+#[cfg(feature = "wasm_parser")]
+use wasm_bindgen::prelude::*;
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "wasm_parser", derive(Tsify), tsify(into_wasm_abi))]
 #[derive(Default, Debug)]
 /// The details of a Flipkart Product.
 ///
 /// Use the `ProductDetails::fetch` method to fetch the details of a product
 /// from the product url.
 pub struct ProductDetails {
+    #[cfg_attr(feature = "wasm_parser", tsify(optional))]
     /// Product name
     pub name: Option<String>,
     /// Whether the product is in stock or not.
     pub in_stock: bool,
+    #[cfg_attr(feature = "wasm_parser", tsify(optional))]
     /// Current price of the product.
     pub current_price: Option<i32>,
+    #[cfg_attr(feature = "wasm_parser", tsify(optional))]
     /// Original price of the product.
     pub original_price: Option<i32>,
+    #[cfg_attr(feature = "wasm_parser", tsify(optional))]
     /// Product ID
     pub product_id: Option<String>,
     /// URL to product, usually shortened and cleaner.
     pub share_url: String,
+    #[cfg_attr(feature = "wasm_parser", tsify(optional))]
     /// Rating of the product.
     pub rating: Option<f32>,
     /// Whether it is f-assured produtc or not.
     pub f_assured: bool,
     /// Highlights of the product.
     pub highlights: Vec<String>,
+    #[cfg_attr(feature = "wasm_parser", tsify(optional))]
     /// Primary seller of the product.
     pub seller: Option<Seller>,
     /// URL to thumbnails of the product.

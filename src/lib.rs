@@ -21,6 +21,8 @@ pub use search::ProductSearch;
 pub use url::Url;
 #[cfg(feature = "wasm_parser")]
 use wasm_bindgen::prelude::*;
+#[cfg(feature = "wasm_parser")]
+use tsify::Tsify;
 
 #[cfg(feature = "fetch")]
 /// Builds the default headers for the client.
@@ -46,27 +48,26 @@ fn build_headers() -> HeaderMap {
 }
 
 #[cfg(feature = "wasm_parser")]
+#[derive(Tsify, serde::Deserialize, serde::Serialize)]
+#[tsify(into_wasm_abi)]
+pub struct Search(Vec<search::SearchResult>);
+
+#[cfg(feature = "wasm_parser")]
 /// Parses the HTML body and returns the search results.
 #[wasm_bindgen]
-pub fn parse_search_results(webpage_body: JsValue) -> Result<JsValue, JsError> {
-    let body = webpage_body
-        .as_string()
-        .ok_or(JsError::new("Argument passed is not a valid string"))?;
+pub fn parse_search_results(webpage_body: String) -> Result<Search, JsError> {
+    let search_results = ProductSearch::parse(webpage_body);
 
-    let search_results = ProductSearch::parse(body);
-
-    Ok(serde_wasm_bindgen::to_value(&search_results)?)
+    // Ok(serde_wasm_bindgen::to_value(&search_results)?)
+    Ok(Search(search_results))
 }
 
 #[cfg(feature = "wasm_parser")]
 /// Parses the HTML body and returns the product details.
 #[wasm_bindgen]
-pub fn parse_product_details(webpage_body: JsValue) -> Result<JsValue, JsError> {
-    let body = webpage_body
-        .as_string()
-        .ok_or(JsError::new("Argument passed is not a valid string"))?;
+pub fn parse_product_details(webpage_body: String) -> Result<ProductDetails, JsError> {
+    let product_details =
+        ProductDetails::parse(webpage_body).map_err(|e| JsError::new(&e.to_string()))?;
 
-    let product_details = ProductDetails::parse(body).map_err(|e| JsError::new(&e.to_string()))?;
-
-    Ok(serde_wasm_bindgen::to_value(&product_details)?)
+    Ok(product_details)
 }
