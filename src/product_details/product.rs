@@ -1,11 +1,13 @@
 use crate::product_details::{Offer, Seller, Specification, Specifications};
-#[cfg(feature = "fetch")]
-use eyre::eyre;
 use eyre::{bail, Result};
-#[cfg(feature = "fetch")]
-use reqwest::Client;
 use scraper::{Html, Selector};
 use url::Url;
+
+#[cfg(feature = "fetch")]
+use eyre::eyre;
+#[cfg(feature = "fetch")]
+use reqwest::Client;
+
 #[cfg(feature = "wasm_parser")]
 use tsify::Tsify;
 #[cfg(feature = "wasm_parser")]
@@ -54,6 +56,7 @@ pub struct ProductDetails {
 }
 
 impl ProductDetails {
+    /// Parse webpage content and return the product details.
     pub fn parse(webpage_content: String) -> Result<Self> {
         let div_selector = &Selector::parse("div").unwrap();
         let h1_selector = &Selector::parse("h1").unwrap();

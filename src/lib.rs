@@ -12,21 +12,20 @@
 pub mod product_details;
 pub mod search;
 
-#[cfg(feature = "fetch")]
-use header::{HeaderMap, HeaderValue};
 pub use product_details::ProductDetails;
-#[cfg(feature = "fetch")]
-use reqwest::header;
 pub use search::ProductSearch;
 pub use url::Url;
+
+#[cfg(feature = "fetch")]
+use header::{HeaderMap, HeaderValue};
+
 #[cfg(feature = "wasm_parser")]
 use wasm_bindgen::prelude::*;
-#[cfg(feature = "wasm_parser")]
-use tsify::Tsify;
 
 #[cfg(feature = "fetch")]
 /// Builds the default headers for the client.
 fn build_headers() -> HeaderMap {
+    use reqwest::header;
     let mut headers = HeaderMap::new();
     headers.insert(
         header::USER_AGENT,
@@ -48,26 +47,22 @@ fn build_headers() -> HeaderMap {
 }
 
 #[cfg(feature = "wasm_parser")]
-#[derive(Tsify, serde::Deserialize, serde::Serialize)]
+#[derive(tsify::Tsify, serde::Deserialize, serde::Serialize)]
 #[tsify(into_wasm_abi)]
+/// Wrapper of the search results vector.
 pub struct Search(Vec<search::SearchResult>);
 
 #[cfg(feature = "wasm_parser")]
-/// Parses the HTML body and returns the search results.
 #[wasm_bindgen]
-pub fn parse_search_results(webpage_body: String) -> Result<Search, JsError> {
+/// Parses the HTML body and returns the search results.
+pub fn parse_search_results(webpage_body: String) -> Search {
     let search_results = ProductSearch::parse(webpage_body);
-
-    // Ok(serde_wasm_bindgen::to_value(&search_results)?)
-    Ok(Search(search_results))
+    Search(search_results)
 }
 
 #[cfg(feature = "wasm_parser")]
-/// Parses the HTML body and returns the product details.
 #[wasm_bindgen]
+/// Parses the HTML body and returns the product details.
 pub fn parse_product_details(webpage_body: String) -> Result<ProductDetails, JsError> {
-    let product_details =
-        ProductDetails::parse(webpage_body).map_err(|e| JsError::new(&e.to_string()))?;
-
-    Ok(product_details)
+    ProductDetails::parse(webpage_body).map_err(|e| JsError::new(&e.to_string()))
 }

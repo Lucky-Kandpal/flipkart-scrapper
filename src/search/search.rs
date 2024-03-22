@@ -1,16 +1,16 @@
+use scraper::{Html, Selector};
+
+#[cfg(feature = "fetch")]
+use crate::ProductDetails;
 #[cfg(feature = "fetch")]
 use eyre::Result;
 #[cfg(feature = "fetch")]
 use reqwest::Client;
-use scraper::{Html, Selector};
 
 #[cfg(feature = "wasm_parser")]
 use tsify::Tsify;
 #[cfg(feature = "wasm_parser")]
 use wasm_bindgen::prelude::*;
-
-#[cfg(feature = "fetch")]
-use crate::ProductDetails;
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "wasm_parser", derive(Tsify), tsify(into_wasm_abi))]
@@ -67,6 +67,7 @@ impl std::ops::DerefMut for ProductSearch {
 }
 
 impl ProductSearch {
+    /// Parses the HTML body and returns the search results.
     pub fn parse(webpage_content: String) -> Vec<SearchResult> {
         let div_selector = &Selector::parse("div").unwrap();
         let img_selector = &Selector::parse("img").unwrap();
