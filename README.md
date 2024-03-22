@@ -43,13 +43,13 @@ Scrapes product details and searches on Flipkart.
 
 ## Example Usage
 
-Navigate to [src/examples](https://github.com/dvishal485/flipkart-scraper/tree/main/examples) for basic use cases.
+Navigate to [examples](https://github.com/dvishal485/flipkart-scraper/tree/main/examples) for basic use cases.
 
 ### NPM Package
 
 NPM Package can be used to parse the contents of webpage to return a valid JSON object response.
 
-Refer to [js_demo example](https://github.com/dvishal485/flipkart-scraper/tree/main/examples/js_demo) for a quick overview of using the npm package.
+Refer to [examples/js_demo example](https://github.com/dvishal485/flipkart-scraper/tree/main/examples/js_demo) for a quick overview of using the npm package.
 
 The package can be installed with npm
 
