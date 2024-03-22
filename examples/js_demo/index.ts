@@ -1,4 +1,4 @@
-import flipkart_scraper from "flipkart_scraper";
+import flipkart_scraper from "@dvishal485/flipkart_scraper";
 
 
 const url = "https://www.flipkart.com/search?q=asus%20vivobook";

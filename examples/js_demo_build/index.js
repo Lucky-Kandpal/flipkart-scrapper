@@ -1,4 +1,4 @@
-import flipkart_scraper from "@dvishal485/flipkart_scraper";
+import flipkart_scraper from "flipkart_scraper";
 const url = "https://www.flipkart.com/search?q=asus%20vivobook";
 const webpage = await fetch(url).then(async (response) => await response.text());
 const data = flipkart_scraper.parse_search_results(webpage);
