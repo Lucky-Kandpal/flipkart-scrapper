@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "wasm-pack build --target nodejs --out-dir ./examples/js_demo/flipkart_scraper/ && tsc index.ts -m nodenext",
-    "start": "node index.js || echo 'Please run `npm run build` to build the project' first"
+    "start": "node index.js || (echo 'Please run `npm run build` to build the project first' && exit 1)"
   },
   "repository": {
     "type": "git",
