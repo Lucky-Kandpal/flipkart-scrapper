@@ -18,6 +18,8 @@ pub use product_details::ProductDetails;
 use reqwest::header;
 pub use search::ProductSearch;
 pub use url::Url;
+#[cfg(feature = "wasm_parser")]
+use wasm_bindgen::prelude::*;
 
 #[cfg(feature = "fetch")]
 /// Builds the default headers for the client.
@@ -40,4 +42,17 @@ fn build_headers() -> HeaderMap {
         ),
     );
     headers
+}
+
+#[cfg(feature = "wasm_parser")]
+/// Parses the HTML body and returns the search results.
+#[wasm_bindgen]
+pub fn parse_search_results(webpage_body: JsValue) -> Result<JsValue, JsError> {
+    let body = webpage_body
+        .as_string()
+        .ok_or(JsError::new("Argument passed is not a valid string"))?;
+
+    let search_results = ProductSearch::parse(body);
+
+    Ok(serde_wasm_bindgen::to_value(&search_results)?)
 }
