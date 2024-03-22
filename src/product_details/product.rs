@@ -1,5 +1,8 @@
 use crate::product_details::{Offer, Seller, Specification, Specifications};
-use eyre::{bail, eyre, Result};
+#[cfg(feature = "fetch")]
+use eyre::eyre;
+use eyre::{bail, Result};
+#[cfg(feature = "fetch")]
 use reqwest::Client;
 use scraper::{Html, Selector};
 use url::Url;
@@ -269,6 +272,7 @@ impl ProductDetails {
         Ok(details)
     }
 
+    #[cfg(feature = "fetch")]
     /// Fetches a product from the given url.
     ///
     /// ```rust

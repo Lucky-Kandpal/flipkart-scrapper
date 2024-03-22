@@ -1,7 +1,10 @@
+#[cfg(feature = "fetch")]
 use eyre::Result;
+#[cfg(feature = "fetch")]
 use reqwest::Client;
 use scraper::{Html, Selector};
 
+#[cfg(feature = "fetch")]
 use crate::ProductDetails;
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -21,6 +24,7 @@ pub struct SearchResult {
 }
 
 impl SearchResult {
+    #[cfg(feature = "fetch")]
     /// Get detailed information about the searched product.
     pub async fn fetch_product(&self) -> Result<ProductDetails> {
         let product_link = url::Url::parse(&self.product_link)?;
@@ -139,6 +143,7 @@ impl ProductSearch {
         search_results
     }
 
+    #[cfg(feature = "fetch")]
     /// Searchs the query for a product on Flipkart.
     pub async fn search(query: String) -> Result<Self> {
         let search_url = url::Url::parse_with_params(

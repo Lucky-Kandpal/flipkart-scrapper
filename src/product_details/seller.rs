@@ -7,4 +7,3 @@ pub struct Seller {
     /// Rating of the seller.
     pub rating: Option<f32>,
 }
-

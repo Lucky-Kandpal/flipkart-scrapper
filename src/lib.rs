@@ -6,15 +6,20 @@
 //!
 //! Feature Flags:
 //! - `serde`: Enables serde support for the structs. (default)
+//! - `fetch`: Enables fetching product details from the URL.
 
 pub mod product_details;
 pub mod search;
+
+#[cfg(feature = "fetch")]
 use header::{HeaderMap, HeaderValue};
 pub use product_details::ProductDetails;
+#[cfg(feature = "fetch")]
 use reqwest::header;
 pub use search::ProductSearch;
 pub use url::Url;
 
+#[cfg(feature = "fetch")]
 /// Builds the default headers for the client.
 fn build_headers() -> HeaderMap {
     let mut headers = HeaderMap::new();
