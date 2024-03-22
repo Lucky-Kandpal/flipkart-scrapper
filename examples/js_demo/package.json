@@ -27,6 +27,6 @@
     "typescript": "^5.4.3"
   },
   "dependencies": {
-    "@dvishal485/flipkart_scraper": "^0.1.141"
+    "@dvishal485/flipkart_scraper": "^0.2.1"
   }
 }
