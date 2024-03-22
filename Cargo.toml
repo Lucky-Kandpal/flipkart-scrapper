@@ -1,7 +1,7 @@
 [package]
 name = "flipkart_scraper"
 description = "Scrape Flipkart product details"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 license = "GPL-3.0"
 repository = "https://github.com/dvishal485/flipkart-scraper"
@@ -9,7 +9,7 @@ repository = "https://github.com/dvishal485/flipkart-scraper"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "lib"]
 
 [features]
 default = ["serde", "wasm_parser"]
