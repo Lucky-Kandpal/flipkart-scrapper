@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "wasm-pack build --target nodejs --out-dir ./examples/js_demo/pkg && tsc index.ts -m nodenext",
+    "build": "wasm-pack build --target nodejs --out-dir ./examples/js_demo/flipkart_scraper/ && tsc index.ts -m nodenext",
     "start": "node index.js || echo 'Please run `npm run build` to build the project' first"
   },
   "repository": {
@@ -25,5 +25,8 @@
   "homepage": "https://github.com/dvishal485/flipkart-scraper/tree/main#readme",
   "devDependencies": {
     "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "flipkart_scraper": "file:flipkart_scraper"
   }
 }

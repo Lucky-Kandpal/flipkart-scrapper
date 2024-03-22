@@ -7,6 +7,7 @@
 //! Feature Flags:
 //! - `serde`: Enables serde support for the structs. (default)
 //! - `fetch`: Enables fetching product details from the URL.
+//! - `wasm_parser`: Enables parsing the HTML Body parsing for nodejs by building wasm build for the parser API.
 
 pub mod product_details;
 pub mod search;
@@ -55,4 +56,17 @@ pub fn parse_search_results(webpage_body: JsValue) -> Result<JsValue, JsError> {
     let search_results = ProductSearch::parse(body);
 
     Ok(serde_wasm_bindgen::to_value(&search_results)?)
+}
+
+#[cfg(feature = "wasm_parser")]
+/// Parses the HTML body and returns the product details.
+#[wasm_bindgen]
+pub fn parse_product_details(webpage_body: JsValue) -> Result<JsValue, JsError> {
+    let body = webpage_body
+        .as_string()
+        .ok_or(JsError::new("Argument passed is not a valid string"))?;
+
+    let product_details = ProductDetails::parse(body).map_err(|e| JsError::new(&e.to_string()))?;
+
+    Ok(serde_wasm_bindgen::to_value(&product_details)?)
 }
