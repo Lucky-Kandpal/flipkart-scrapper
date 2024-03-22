@@ -73,12 +73,12 @@ npm i @dvishal485/flipkart_scraper
 
   1. Fetch the search page (`https://www.flipkart.com/search?q={query}`) using fetch API or axios or any other networking module.
   2. Parse the webpage content using the library.
-  
+
     ```javascript
     import flipkart_scraper from "@dvishal485/flipkart_scraper";
 
-    const product_details = flipkart_scraper.parse_search_results(product_webpage);
-    console.log(product_details);
+    const search_result = flipkart_scraper.parse_search_results(product_webpage);
+    console.log(search_result);
     ```
 
 ### Rust Crate
