@@ -16,16 +16,14 @@ pub use product_details::ProductDetails;
 pub use search::ProductSearch;
 pub use url::Url;
 
-#[cfg(feature = "fetch")]
-use header::{HeaderMap, HeaderValue};
-
 #[cfg(feature = "wasm_parser")]
 use wasm_bindgen::prelude::*;
 
 #[cfg(feature = "fetch")]
 /// Builds the default headers for the client.
-fn build_headers() -> HeaderMap {
+fn build_headers() -> reqwest::header::HeaderMap {
     use reqwest::header;
+    use header::{HeaderMap, HeaderValue};
     let mut headers = HeaderMap::new();
     headers.insert(
         header::USER_AGENT,
