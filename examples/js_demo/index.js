@@ -23,6 +23,6 @@ if (data.length !== 0) {
         "method": "GET",
         "mode": "cors"
     }).then(async (response) => await response.text());
-    const product_details = flipkart_scraper.parse_product_details("product_webpage");
+    const product_details = flipkart_scraper.parse_product_details(product_webpage);
     console.log(product_details);
 }
