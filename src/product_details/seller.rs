@@ -1,6 +1,6 @@
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "wasm_parser", derive(tsify::Tsify), tsify(into_wasm_abi))]
-#[derive(Default, Debug)]
+#[derive(Debug)]
 /// Information about the seller of a Product.
 pub struct Seller {
     /// Name of the seller.

@@ -1,7 +1,7 @@
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 /// Information about the offers available on a Product.
 #[cfg_attr(feature = "wasm_parser", derive(tsify::Tsify), tsify(into_wasm_abi))]
-#[derive(Default, Debug)]
+#[derive(Debug)]
 pub struct Offer {
     /// The category are typically like: `Bank Offer`,
     /// `Exchange Offer`, `No Cost EMI Available`,
