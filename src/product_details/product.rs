@@ -86,8 +86,15 @@ impl ProductDetails {
         let title = document
             .select(h1_selector)
             .next()
-            .or(document.select(title_selector).next())
+            .or_else(|| document.select(title_selector).next())
             .map(|title| title.text().collect::<String>());
+
+        if let Some(title) = &title {
+            if title == "Are you a human?" {
+                bail!("Flipkart labelled the network request as a potential bot service.");
+            }
+        }
+
         details.name = title;
 
         // thumbnails
@@ -300,7 +307,7 @@ impl ProductDetails {
     ///     println!("{:#?}", details);
     ///     Ok(())
     /// }
-    // ```
+    /// ```
     pub async fn fetch(url: Url) -> Result<Self> {
         if !url
             .domain()
