@@ -1,4 +1,4 @@
-# WIP
+# v0.3.0
 
 - Updated dependencies
 - Add nix flake based dev shell
