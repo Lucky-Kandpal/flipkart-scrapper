@@ -10,6 +10,9 @@ pub enum ProductDetailsError {
     /// Flipkart labelled the network request as a potential bot service.
     #[error("Flipkart labelled the network request as a potential bot service")]
     IdentifiedAsBot,
+    /// Retry error from the server.
+    #[error("Server responded with retry message")]
+    FlipkartRetryError,
 }
 
 pub enum FetchError {

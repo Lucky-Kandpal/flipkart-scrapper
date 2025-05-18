@@ -82,6 +82,11 @@ impl ProductDetails {
         }
         let document = Html::parse_document(&webpage_content);
 
+        let retry_error = webpage_content.contains("Retry in ");
+        if retry_error {
+            return Err(ProductDetailsError::FlipkartRetryError);
+        }
+
         let mut details = ProductDetails::default();
 
         let title = document

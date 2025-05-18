@@ -190,6 +190,11 @@ impl ProductSearch {
             .await
             .map_err(|source| SearchError::WebpageTextParseError { source })?;
 
+        let retry_error = body.contains("Retry in ");
+        if retry_error {
+            return Err(SearchError::FlipkartRetryError);
+        }
+
         let search_results = Self::parse(body);
 
         Ok(ProductSearch {
