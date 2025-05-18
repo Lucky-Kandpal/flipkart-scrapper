@@ -24,9 +24,9 @@
   },
   "homepage": "https://github.com/dvishal485/flipkart-scraper/tree/main#readme",
   "devDependencies": {
-    "typescript": "^5.4.3"
+    "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@dvishal485/flipkart_scraper": "^0.2.7"
+    "@dvishal485/flipkart_scraper": "latest"
   }
 }
