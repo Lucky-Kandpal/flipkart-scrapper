@@ -18,15 +18,15 @@ wasm_parser = ["serde-wasm-bindgen", "wasm-bindgen", "serde", "tsify"]
 
 [dependencies]
 eyre = "0.6.12"
-scraper = "0.23.1"
-url = "2.5.4"
-serde = { version = "1.0.219", features = ["serde_derive"], optional = true }
+scraper = "0.20.0"
+url = "2.5.2"
+serde = { version = "1.0.204", features = ["serde_derive"], optional = true }
 serde-wasm-bindgen = { version = "0.6.5", optional = true }
-wasm-bindgen = { version = "0.2.100", optional = true }
-reqwest = { version = "0.12.15", optional = true }
+wasm-bindgen = { version = "0.2.92", optional = true }
+reqwest =  { version = "0.12.5", optional = true } 
 # to patch getrandom for wasm
 getrandom = { version = "0.3.3", features = ["wasm_js"] }
-tsify = { version = "0.5.5", features = ["js"], optional = true }
+tsify = { version = "0.4.5", features = ["js"], optional = true }
 
 [dev-dependencies]
 tokio = { version = "1.45.0", features = ["macros", "rt-multi-thread"] }
