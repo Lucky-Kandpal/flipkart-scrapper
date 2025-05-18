@@ -1,3 +1,22 @@
+# WIP
+
+- Updated dependencies
+- Add nix flake based dev shell
+
+---
+
+# v0.2.9
+
+- Updated dependencies
+
+---
+
+# v0.2.8
+
+- Updated dependencies
+
+---
+
 # v0.2.7
 
 - Updated dependencies and used optimization level `z` for production builds, reducing binary size.
