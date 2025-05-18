@@ -2,6 +2,9 @@
 
 - Updated dependencies
 - Add nix flake based dev shell
+- Fixed and updated examples
+- Update user agent
+- Add rust test github action
 
 ---
 
