@@ -12,9 +12,9 @@ repository = "https://github.com/dvishal485/flipkart-scraper"
 crate-type = ["cdylib", "lib"]
 
 [features]
-default = ["serde", "wasm_parser"]
+default = ["serde"]
 fetch = ["reqwest"]
-wasm_parser = ["wasm-bindgen", "serde", "tsify"]
+wasm_parser = ["wasm-bindgen", "serde", "tsify", "console_error_panic_hook"]
 
 [dependencies]
 scraper = "0.20.0"
@@ -26,6 +26,7 @@ reqwest = { version = "0.12.15", optional = true }
 getrandom = { version = "0.3.3", features = ["wasm_js"] }
 tsify = { version = "0.5.5", features = ["js"], optional = true }
 thiserror = "2.0.12"
+console_error_panic_hook = { version = "0.1.7", optional = true }
 
 [dev-dependencies]
 tokio = { version = "1.45.0", features = ["macros", "rt-multi-thread"] }

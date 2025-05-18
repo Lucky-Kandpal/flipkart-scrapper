@@ -54,6 +54,7 @@ pub struct Search(Vec<search::SearchResult>);
 #[wasm_bindgen]
 /// Parses the HTML body and returns the search results.
 pub fn parse_search_results(webpage_body: String) -> Search {
+    console_error_panic_hook::set_once();
     let search_results = ProductSearch::parse(webpage_body);
     Search(search_results)
 }
@@ -62,5 +63,6 @@ pub fn parse_search_results(webpage_body: String) -> Search {
 #[wasm_bindgen]
 /// Parses the HTML body and returns the product details.
 pub fn parse_product_details(webpage_body: String) -> Result<ProductDetails, JsError> {
+    console_error_panic_hook::set_once();
     ProductDetails::parse(webpage_body).map_err(|e| JsError::new(&e.to_string()))
 }
