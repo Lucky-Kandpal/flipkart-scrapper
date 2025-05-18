@@ -1,4 +1,4 @@
-# v0.3.0
+# v0.3.1
 
 - Updated dependencies
 - Add nix flake based dev shell
