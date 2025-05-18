@@ -1,3 +1,10 @@
+# WIP
+
+- Updated dependencies
+- Add nix flake based dev shell
+
+---
+
 # v0.2.8
 
 - Updated dependencies
