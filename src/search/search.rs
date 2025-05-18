@@ -1,7 +1,12 @@
 use scraper::{Html, Selector};
 
 #[cfg(feature = "fetch")]
+use super::SearchParams;
+#[cfg(not(feature = "fetch"))]
+type SearchParams = String;
+#[cfg(feature = "fetch")]
 use crate::ProductDetails;
+
 #[cfg(feature = "fetch")]
 use eyre::Result;
 #[cfg(feature = "fetch")]
@@ -48,6 +53,8 @@ impl SearchResult {
 pub struct ProductSearch {
     /// Original query used to search
     pub query: String,
+    /// Query parameters used to search
+    pub query_params: SearchParams,
     /// URL of the search query
     pub query_url: String,
     /// List of search results
@@ -154,10 +161,13 @@ impl ProductSearch {
 
     #[cfg(feature = "fetch")]
     /// Searchs the query for a product on Flipkart.
-    pub async fn search(query: String) -> Result<Self> {
+    pub async fn search(query: String, params: SearchParams) -> Result<Self> {
+        let mut url_params = params.url_params();
+        url_params.push(("q", query.clone()));
+
         let search_url = url::Url::parse_with_params(
             "https://www.flipkart.com/search?marketplace=FLIPKART",
-            &[("q", query.to_owned())],
+            url_params,
         )?;
 
         let client = Client::builder()
@@ -169,7 +179,8 @@ impl ProductSearch {
         let search_results = Self::parse(body);
 
         Ok(ProductSearch {
-            query,
+            query: query,
+            query_params: params,
             query_url: search_url.into(),
             results: search_results,
         })
