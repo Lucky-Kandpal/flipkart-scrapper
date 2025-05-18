@@ -1,3 +1,9 @@
+# v0.4.0
+
+- Added advanced search with page number, min-max price range and sort order support.
+
+---
+
 # v0.3.2
 
 - Patch to old deps due to wasm unreachable error in node module
