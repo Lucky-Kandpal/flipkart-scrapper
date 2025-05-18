@@ -24,7 +24,7 @@ wasm-bindgen = { version = "0.2.92", optional = true }
 reqwest = { version = "0.12.15", optional = true }
 # to patch getrandom for wasm
 getrandom = { version = "0.3.3", features = ["wasm_js"] }
-tsify = { version = "0.4.5", features = ["js"], optional = true }
+tsify = { version = "0.5.5", features = ["js"], optional = true }
 thiserror = "2.0.12"
 
 [dev-dependencies]

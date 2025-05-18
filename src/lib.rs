@@ -45,8 +45,8 @@ fn build_headers() -> reqwest::header::HeaderMap {
 }
 
 #[cfg(feature = "wasm_parser")]
-#[derive(tsify::Tsify, serde::Deserialize, serde::Serialize)]
-#[tsify(into_wasm_abi)]
+#[derive(serde::Deserialize, serde::Serialize)]
+#[cfg_attr(feature = "wasm_parser", derive(tsify::Tsify), tsify(into_wasm_abi))]
 /// Wrapper of the search results vector.
 pub struct Search(Vec<search::SearchResult>);
 
