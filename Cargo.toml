@@ -12,12 +12,11 @@ repository = "https://github.com/dvishal485/flipkart-scraper"
 crate-type = ["cdylib", "lib"]
 
 [features]
-default = ["serde"]
+default = ["serde", "fetch"]
 fetch = ["reqwest"]
 wasm_parser = ["serde-wasm-bindgen", "wasm-bindgen", "serde", "tsify"]
 
 [dependencies]
-eyre = "0.6.12"
 scraper = "0.20.0"
 url = "2.5.4"
 serde = { version = "1.0.204", features = ["serde_derive"], optional = true }
@@ -27,6 +26,7 @@ reqwest = { version = "0.12.15", optional = true }
 # to patch getrandom for wasm
 getrandom = { version = "0.3.3", features = ["wasm_js"] }
 tsify = { version = "0.4.5", features = ["js"], optional = true }
+thiserror = "2.0.12"
 
 [dev-dependencies]
 tokio = { version = "1.45.0", features = ["macros", "rt-multi-thread"] }

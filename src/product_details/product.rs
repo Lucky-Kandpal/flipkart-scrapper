@@ -1,10 +1,9 @@
 use crate::product_details::{Offer, Seller, Specification, Specifications};
-use eyre::{bail, Result};
 use scraper::{Html, Selector};
 use url::Url;
 
 #[cfg(feature = "fetch")]
-use eyre::eyre;
+use super::errors::FetchError;
 #[cfg(feature = "fetch")]
 use reqwest::Client;
 
@@ -12,6 +11,8 @@ use reqwest::Client;
 use tsify::Tsify;
 #[cfg(feature = "wasm_parser")]
 use wasm_bindgen::prelude::*;
+
+use super::errors::ProductDetailsError;
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "wasm_parser", derive(Tsify), tsify(into_wasm_abi))]
@@ -57,7 +58,7 @@ pub struct ProductDetails {
 
 impl ProductDetails {
     /// Parse webpage content and return the product details.
-    pub fn parse(webpage_content: String) -> Result<Self> {
+    pub fn parse(webpage_content: String) -> Result<Self, ProductDetailsError> {
         let div_selector = &Selector::parse("div").unwrap();
         let h1_selector = &Selector::parse("h1").unwrap();
         let title_selector = &Selector::parse("title").unwrap();
@@ -74,10 +75,10 @@ impl ProductDetails {
         if webpage_content.contains("has been moved or deleted")
             || webpage_content.contains("not right!")
         {
-            bail!("Link provided doesn't corresponds to any product");
+            return Err(ProductDetailsError::NonProductLink);
         }
         if webpage_content.contains("Internal Server Error") {
-            bail!("Internal Server Error. Host is down or is blocking use of this library.");
+            return Err(ProductDetailsError::InternalServerError);
         }
         let document = Html::parse_document(&webpage_content);
 
@@ -91,7 +92,7 @@ impl ProductDetails {
 
         if let Some(title) = &title {
             if title == "Are you a human?" {
-                bail!("Flipkart labelled the network request as a potential bot service.");
+                return Err(ProductDetailsError::IdentifiedAsBot);
             }
         }
 
@@ -308,21 +309,29 @@ impl ProductDetails {
     ///     Ok(())
     /// }
     /// ```
-    pub async fn fetch(url: Url) -> Result<Self> {
+    pub async fn fetch(url: Url) -> Result<Self, FetchError> {
         if !url
             .domain()
-            .ok_or_else(|| eyre!("Domain name invalid."))?
+            .ok_or(FetchError::InvalidDomainName)?
             .contains("flipkart.com")
         {
-            bail!("Only flipkart.com is supported");
+            return Err(FetchError::NonFlipkartDomain);
         }
 
         let client = Client::builder()
             .default_headers(crate::build_headers())
-            .build()?;
+            .build()
+            .map_err(|source| FetchError::ClientBuilderError { source })?;
 
-        let webpage = client.get(url.to_owned()).send().await?;
-        let body = webpage.text().await?;
+        let webpage = client
+            .get(url.to_owned())
+            .send()
+            .await
+            .map_err(|source| FetchError::HttpRequestError { source })?;
+        let body = webpage
+            .text()
+            .await
+            .map_err(|source| FetchError::WebpageTextParseError { source })?;
 
         let details = Self::parse(body).and_then(|mut p| {
             if p.share_url.is_empty() {
@@ -331,6 +340,6 @@ impl ProductDetails {
             Ok(p)
         });
 
-        details
+        details.map_err(|source| FetchError::ProductDetailsError { source })
     }
 }

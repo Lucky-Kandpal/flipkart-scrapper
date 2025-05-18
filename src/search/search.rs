@@ -5,10 +5,12 @@ use super::SearchParams;
 #[cfg(not(feature = "fetch"))]
 type SearchParams = String;
 #[cfg(feature = "fetch")]
+use super::errors::SearchError;
+#[cfg(feature = "fetch")]
+use crate::product_details::errors::FetchError;
+#[cfg(feature = "fetch")]
 use crate::ProductDetails;
 
-#[cfg(feature = "fetch")]
-use eyre::Result;
 #[cfg(feature = "fetch")]
 use reqwest::Client;
 
@@ -39,8 +41,9 @@ pub struct SearchResult {
 impl SearchResult {
     #[cfg(feature = "fetch")]
     /// Get detailed information about the searched product.
-    pub async fn fetch_product(&self) -> Result<ProductDetails> {
-        let product_link = url::Url::parse(&self.product_link)?;
+    pub async fn fetch_product(&self) -> Result<ProductDetails, FetchError> {
+        let product_link = url::Url::parse(&self.product_link)
+            .map_err(|source| FetchError::UrlParseError { source })?;
         ProductDetails::fetch(product_link).await
     }
 }
@@ -161,21 +164,32 @@ impl ProductSearch {
 
     #[cfg(feature = "fetch")]
     /// Searchs the query for a product on Flipkart.
-    pub async fn search(query: String, params: SearchParams) -> Result<Self> {
+    pub async fn search(query: String, params: SearchParams) -> Result<Self, SearchError> {
         let mut url_params = params.url_params();
         url_params.push(("q", query.clone()));
 
         let search_url = url::Url::parse_with_params(
             "https://www.flipkart.com/search?marketplace=FLIPKART",
             url_params,
-        )?;
+        )
+        .map_err(|source| SearchError::UrlParseError { source })?;
 
         let client = Client::builder()
             .default_headers(crate::build_headers())
-            .build()?;
+            .build()
+            .map_err(|source| SearchError::ClientBuilderError { source })?;
 
-        let webpage = client.get(search_url.to_owned()).send().await?;
-        let body = webpage.text().await?;
+        let webpage = client
+            .get(search_url.to_owned())
+            .send()
+            .await
+            .map_err(|source| SearchError::HttpRequestError { source })?;
+        
+        let body = webpage
+            .text()
+            .await
+            .map_err(|source| SearchError::WebpageTextParseError { source })?;
+
         let search_results = Self::parse(body);
 
         Ok(ProductSearch {

@@ -210,16 +210,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "eyre"
-version = "0.6.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7cd915d99f24784cdc19fd37ef22b97e3ff0ae756c7e492e9fbfe897d61e2aec"
-dependencies = [
- "indenter",
- "once_cell",
-]
-
-[[package]]
 name = "fastrand"
 version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -229,12 +219,12 @@ checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
 name = "flipkart_scraper"
 version = "0.4.0"
 dependencies = [
- "eyre",
  "getrandom 0.3.3",
  "reqwest",
  "scraper",
  "serde",
  "serde-wasm-bindgen 0.6.5",
+ "thiserror",
  "tokio",
  "tsify",
  "url",
@@ -640,12 +630,6 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
 ]
-
-[[package]]
-name = "indenter"
-version = "0.3.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce23b50ad8242c51a442f3ff322d56b02f08852c77e4c0b4d3fd684abc89c683"
 
 [[package]]
 name = "indexmap"
@@ -1515,6 +1499,26 @@ dependencies = [
  "futf",
  "mac",
  "utf-8",
+]
+
+[[package]]
+name = "thiserror"
+version = "2.0.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "567b8a2dae586314f7be2a752ec7474332959c6460e02bde30d702a66d488708"
+dependencies = [
+ "thiserror-impl",
+]
+
+[[package]]
+name = "thiserror-impl"
+version = "2.0.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f7cf42b4507d8ea322120659672cf1b9dbb93f8f2d4ecfd6e51350ff5b17a1d"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
