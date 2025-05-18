@@ -1,3 +1,9 @@
+# v0.3.2
+
+- Patch to old deps due to wasm unreachable error in node module
+
+---
+
 # v0.3.1
 
 - Updated dependencies
