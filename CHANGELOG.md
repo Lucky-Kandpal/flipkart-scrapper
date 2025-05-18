@@ -5,6 +5,12 @@
 
 ---
 
+# v0.2.9
+
+- Updated dependencies
+
+---
+
 # v0.2.8
 
 - Updated dependencies
