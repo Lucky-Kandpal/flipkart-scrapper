@@ -28,6 +28,9 @@ reqwest = { version = "0.12.15", optional = true }
 getrandom = { version = "0.3.3", features = ["wasm_js"] }
 tsify = { version = "0.5.5", features = ["js"], optional = true }
 
+[dev-dependencies]
+tokio = { version = "1.45.0", features = ["macros", "rt-multi-thread"] }
+
 [profile.release]
 # network overhead is much more than the parsing overhead, focus on binary size
 opt-level = "z"
