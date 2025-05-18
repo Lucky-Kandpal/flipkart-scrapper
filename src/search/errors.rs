@@ -4,7 +4,6 @@ pub enum SearchError {
     UrlParseError { source: url::ParseError },
     #[cfg(feature = "fetch")]
     /// Retry error from the server.
-    #[error("Server responded with retry message")]
     FlipkartRetryError,
     #[cfg(feature = "fetch")]
     /// Request client build error.
