@@ -19,8 +19,8 @@ wasm_parser = ["wasm-bindgen", "serde", "tsify", "console_error_panic_hook"]
 [dependencies]
 scraper = "0.20.0"
 url = "2.5.4"
-serde = { version = "1.0.204", features = ["serde_derive"], optional = true }
-wasm-bindgen = { version = "0.2.92", optional = true }
+serde = { version = "1.0.219", features = ["serde_derive"], optional = true }
+wasm-bindgen = { version = "0.2.100", optional = true }
 reqwest = { version = "0.12.15", optional = true }
 # to patch getrandom for wasm
 getrandom = { version = "0.3.3", features = ["wasm_js"] }
