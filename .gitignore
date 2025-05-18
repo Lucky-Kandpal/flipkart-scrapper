@@ -4,3 +4,4 @@ node_modules/
 *.sh
 examples/*/*.lock
 examples/*/*-lock.json
+.direnv/
