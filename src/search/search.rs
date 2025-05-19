@@ -20,7 +20,7 @@ use tsify::Tsify;
 use wasm_bindgen::prelude::*;
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "wasm_parser", derive(Tsify), tsify(into_wasm_abi))]
+#[cfg_attr(feature = "wasm_parser", derive(Tsify))]
 #[derive(Debug, Default)]
 /// Product found in search results
 pub struct SearchResult {
