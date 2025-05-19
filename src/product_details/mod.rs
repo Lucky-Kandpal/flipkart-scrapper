@@ -6,3 +6,4 @@ mod offer;
 pub use offer::*;
 mod specs;
 pub use specs::*;
+pub mod errors;

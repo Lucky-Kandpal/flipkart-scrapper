@@ -1,3 +1,14 @@
+# v0.5.0
+
+- Updated more deps
+- Added a console error hook on rust panic
+- Improved error handling
+- Remove extraneous code
+- Remove extraneous wasm traits
+- Expose build url for search with parameters function
+
+---
+
 # v0.4.0
 
 - Added advanced search with page number, min-max price range and sort order support.

@@ -1,5 +1,5 @@
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "wasm_parser", derive(tsify::Tsify), tsify(into_wasm_abi))]
+#[cfg_attr(feature = "wasm_parser", derive(tsify::Tsify))]
 #[derive(Debug)]
 /// A single specification (key-value pair) of a Product.
 pub struct Specification {
@@ -10,7 +10,7 @@ pub struct Specification {
 }
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "wasm_parser", derive(tsify::Tsify), tsify(into_wasm_abi))]
+#[cfg_attr(feature = "wasm_parser", derive(tsify::Tsify))]
 #[derive(Debug)]
 /// Specifications represents a group of specifications.
 pub struct Specifications {

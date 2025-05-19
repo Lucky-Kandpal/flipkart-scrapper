@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[derive(Debug)]
+#[cfg_attr(feature = "wasm_parser", derive(tsify::Tsify), tsify(from_wasm_abi))]
+#[derive(Debug, Default)]
 /// Parameters for the search request.
 pub struct SearchParams {
     /// The page number to return.
@@ -65,6 +66,7 @@ impl SearchParams {
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Copy, Clone)]
+#[cfg_attr(feature = "wasm_parser", derive(tsify::Tsify), tsify(into_wasm_abi))]
 /// The sort order of the search results.
 #[serde(rename_all = "snake_case")]
 pub enum SortOrder {

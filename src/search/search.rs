@@ -1,14 +1,13 @@
 use scraper::{Html, Selector};
+use url::Url;
 
-#[cfg(feature = "fetch")]
+use super::errors::SearchError;
 use super::SearchParams;
-#[cfg(not(feature = "fetch"))]
-type SearchParams = String;
+#[cfg(feature = "fetch")]
+use crate::product_details::errors::FetchError;
 #[cfg(feature = "fetch")]
 use crate::ProductDetails;
 
-#[cfg(feature = "fetch")]
-use eyre::Result;
 #[cfg(feature = "fetch")]
 use reqwest::Client;
 
@@ -18,7 +17,7 @@ use tsify::Tsify;
 use wasm_bindgen::prelude::*;
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "wasm_parser", derive(Tsify), tsify(into_wasm_abi))]
+#[cfg_attr(feature = "wasm_parser", derive(Tsify))]
 #[derive(Debug, Default)]
 /// Product found in search results
 pub struct SearchResult {
@@ -39,8 +38,9 @@ pub struct SearchResult {
 impl SearchResult {
     #[cfg(feature = "fetch")]
     /// Get detailed information about the searched product.
-    pub async fn fetch_product(&self) -> Result<ProductDetails> {
-        let product_link = url::Url::parse(&self.product_link)?;
+    pub async fn fetch_product(&self) -> Result<ProductDetails, FetchError> {
+        let product_link = Url::parse(&self.product_link)
+            .map_err(|source| FetchError::UrlParseError { source })?;
         ProductDetails::fetch(product_link).await
     }
 }
@@ -159,23 +159,43 @@ impl ProductSearch {
         search_results
     }
 
-    #[cfg(feature = "fetch")]
-    /// Searchs the query for a product on Flipkart.
-    pub async fn search(query: String, params: SearchParams) -> Result<Self> {
+    pub fn build_request_url(query: String, params: &SearchParams) -> Result<Url, SearchError> {
         let mut url_params = params.url_params();
-        url_params.push(("q", query.clone()));
+        url_params.push(("q", query.to_owned()));
 
-        let search_url = url::Url::parse_with_params(
+        Url::parse_with_params(
             "https://www.flipkart.com/search?marketplace=FLIPKART",
             url_params,
-        )?;
+        )
+        .map_err(|source| SearchError::UrlParseError { source })
+    }
+
+    #[cfg(feature = "fetch")]
+    /// Searchs the query for a product on Flipkart.
+    pub async fn search(query: String, params: SearchParams) -> Result<Self, SearchError> {
+        let search_url = Self::build_request_url(query.clone(), &params)?;
 
         let client = Client::builder()
             .default_headers(crate::build_headers())
-            .build()?;
+            .build()
+            .map_err(|source| SearchError::ClientBuilderError { source })?;
 
-        let webpage = client.get(search_url.to_owned()).send().await?;
-        let body = webpage.text().await?;
+        let webpage = client
+            .get(search_url.to_owned())
+            .send()
+            .await
+            .map_err(|source| SearchError::HttpRequestError { source })?;
+
+        let body = webpage
+            .text()
+            .await
+            .map_err(|source| SearchError::WebpageTextParseError { source })?;
+
+        let retry_error = body.contains("Retry in ");
+        if retry_error {
+            return Err(SearchError::FlipkartRetryError);
+        }
+
         let search_results = Self::parse(body);
 
         Ok(ProductSearch {
