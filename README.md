@@ -65,6 +65,8 @@ npm i @dvishal485/flipkart_scraper
       ```javascript
       import flipkart_scraper from "@dvishal485/flipkart_scraper";
 
+      const product_webpage = "fetch_desired_flipkart_product_page"; // use fetcher of your like
+
       const product_details = flipkart_scraper.parse_product_details(product_webpage);
       console.log(product_details);
       ```
@@ -74,12 +76,24 @@ npm i @dvishal485/flipkart_scraper
   1. Fetch the search page (`https://www.flipkart.com/search?q={query}`) using fetch API or axios or any other networking module.
   2. Parse the webpage content using the library.
 
-    ```javascript
-    import flipkart_scraper from "@dvishal485/flipkart_scraper";
-
-    const search_result = flipkart_scraper.parse_search_results(product_webpage);
-    console.log(search_result);
-    ```
+      ```javascript
+      import flipkart_scraper from "@dvishal485/flipkart_scraper";
+      
+      const url = flipkart_scraper.build_search_url("asus vivovook", {
+        max_price: 40000,
+        min_price: undefined,
+        page_number: 2,
+        sort: "price_high_to_low",
+        others: undefined,
+      });
+  
+      const webpage = await fetch(url).then(
+        async (response) => await response.text()
+      );
+  
+      const search_result = flipkart_scraper.parse_search_results(product_webpage);
+      console.log(search_result);
+      ```
 
 ### Rust Crate
 
@@ -90,7 +104,7 @@ npm i @dvishal485/flipkart_scraper
   ```rust
   use std::error::Error;
   use flipkart_scraper::{ProductDetails, Url};
-
+  
   #[tokio::main]
   async fn main() -> Result<(), Box<dyn Error>> {
       let url = "https://www.flipkart.com/samsung-galaxy-f13-waterfall-blue-64-gb/p/itm583ef432b2b0c";
@@ -104,19 +118,32 @@ npm i @dvishal485/flipkart_scraper
 
   Snippet to search a particular product on Flipkart using a given query.
 
+  github.com/dvishal485/flipkart-scraper/blob/3cf7e8ca96269c7a64ca8b02fd661b5e0f041872/examples/search_product/src/main.rs?plain=1
+  
   ```rust
   use flipkart_scraper::ProductSearch;
+  use flipkart_scraper::search::{SortOrder, SearchParams};
   use std::error::Error;
-
+  
   #[tokio::main]
   async fn main() -> Result<(), Box<dyn Error>> {
       let query = "samsung washing machine";
-      let details = ProductSearch::search(query.into()).await;
+      let params = SearchParams {
+          page_number: Some(1),
+          sort: Some(SortOrder::PriceLowToHigh),
+          min_price: Some(10000),
+          max_price: Some(20000),
+          others: None,
+      };
+  
+      let details = ProductSearch::search(query.into(), params).await;
+  
       if let Ok(s) = details {
           println!("{:#?}\n\nTotal {} search results.", s, s.results.len());
       } else {
           println!("{}", details.unwrap_err());
       }
+      
       Ok(())
   }
   ```
