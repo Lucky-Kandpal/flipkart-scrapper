@@ -22,8 +22,8 @@ use wasm_bindgen::prelude::*;
 #[cfg(feature = "fetch")]
 /// Builds the default headers for the client.
 fn build_headers() -> reqwest::header::HeaderMap {
-    use reqwest::header;
     use header::{HeaderMap, HeaderValue};
+    use reqwest::header;
     let mut headers = HeaderMap::new();
     headers.insert(
         header::USER_AGENT,
@@ -65,4 +65,12 @@ pub fn parse_search_results(webpage_body: String) -> Search {
 pub fn parse_product_details(webpage_body: String) -> Result<ProductDetails, JsError> {
     console_error_panic_hook::set_once();
     ProductDetails::parse(webpage_body).map_err(|e| JsError::new(&e.to_string()))
+}
+
+#[cfg(feature = "wasm_parser")]
+#[wasm_bindgen]
+pub fn build_search_url(query: String, params: search::SearchParams) -> Result<String, JsError> {
+    ProductSearch::build_request_url(query, params)
+        .map(|url| url.to_string())
+        .map_err(|e| JsError::new(&e.to_string()))
 }

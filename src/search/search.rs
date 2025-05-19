@@ -39,7 +39,7 @@ impl SearchResult {
     #[cfg(feature = "fetch")]
     /// Get detailed information about the searched product.
     pub async fn fetch_product(&self) -> Result<ProductDetails, FetchError> {
-        let product_link = url::Url::parse(&self.product_link)
+        let product_link = Url::parse(&self.product_link)
             .map_err(|source| FetchError::UrlParseError { source })?;
         ProductDetails::fetch(product_link).await
     }
@@ -159,17 +159,21 @@ impl ProductSearch {
         search_results
     }
 
-    #[cfg(feature = "fetch")]
-    /// Searchs the query for a product on Flipkart.
-    pub async fn search(query: String, params: SearchParams) -> Result<Self, SearchError> {
+    pub fn build_request_url(query: String, params: SearchParams) -> Result<Url, SearchError> {
         let mut url_params = params.url_params();
         url_params.push(("q", query.clone()));
 
-        let search_url = url::Url::parse_with_params(
+        Url::parse_with_params(
             "https://www.flipkart.com/search?marketplace=FLIPKART",
             url_params,
         )
-        .map_err(|source| SearchError::UrlParseError { source })?;
+        .map_err(|source| SearchError::UrlParseError { source })
+    }
+
+    #[cfg(feature = "fetch")]
+    /// Searchs the query for a product on Flipkart.
+    pub async fn search(query: String, params: SearchParams) -> Result<Self, SearchError> {
+        let search_url = Self::build_request_url(query, params)?;
 
         let client = Client::builder()
             .default_headers(crate::build_headers())
@@ -181,7 +185,7 @@ impl ProductSearch {
             .send()
             .await
             .map_err(|source| SearchError::HttpRequestError { source })?;
-        
+
         let body = webpage
             .text()
             .await
