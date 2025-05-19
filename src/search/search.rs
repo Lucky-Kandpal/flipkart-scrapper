@@ -1,11 +1,8 @@
 use scraper::{Html, Selector};
+use url::Url;
 
-#[cfg(feature = "fetch")]
-use super::SearchParams;
-#[cfg(not(feature = "fetch"))]
-type SearchParams = String;
-#[cfg(feature = "fetch")]
 use super::errors::SearchError;
+use super::SearchParams;
 #[cfg(feature = "fetch")]
 use crate::product_details::errors::FetchError;
 #[cfg(feature = "fetch")]
