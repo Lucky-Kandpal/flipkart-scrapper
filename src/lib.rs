@@ -69,7 +69,7 @@ pub fn parse_product_details(webpage_body: String) -> Result<ProductDetails, JsE
 
 #[cfg(feature = "wasm_parser")]
 #[wasm_bindgen]
-pub fn build_search_url(query: String, params: search::SearchParams) -> Result<String, JsError> {
+pub fn build_search_url(query: String, params: &search::SearchParams) -> Result<String, JsError> {
     ProductSearch::build_request_url(query, params)
         .map(|url| url.to_string())
         .map_err(|e| JsError::new(&e.to_string()))

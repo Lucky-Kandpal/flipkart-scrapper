@@ -159,9 +159,9 @@ impl ProductSearch {
         search_results
     }
 
-    pub fn build_request_url(query: String, params: SearchParams) -> Result<Url, SearchError> {
+    pub fn build_request_url(query: String, params: &SearchParams) -> Result<Url, SearchError> {
         let mut url_params = params.url_params();
-        url_params.push(("q", query.clone()));
+        url_params.push(("q", query.to_owned()));
 
         Url::parse_with_params(
             "https://www.flipkart.com/search?marketplace=FLIPKART",
@@ -173,7 +173,7 @@ impl ProductSearch {
     #[cfg(feature = "fetch")]
     /// Searchs the query for a product on Flipkart.
     pub async fn search(query: String, params: SearchParams) -> Result<Self, SearchError> {
-        let search_url = Self::build_request_url(query, params)?;
+        let search_url = Self::build_request_url(query.clone(), &params)?;
 
         let client = Client::builder()
             .default_headers(crate::build_headers())
