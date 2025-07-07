@@ -85,6 +85,7 @@ impl ProductSearch {
         let search_results = document
             .select(div_selector)
             .filter(|div| div.value().attr("data-id").is_some())
+            .take(5) // 👈 LIMIT TO TOP 5
             .filter_map(|product| {
                 let mut link_iter = product.select(link_selector);
                 let mut link_elem = link_iter.next()?;
